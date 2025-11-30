@@ -89,16 +89,19 @@ async def dashboard():
         <span class=\"pill\">Stackbank · Prototype</span>
         <h1>Aave Avalanche Dashboard</h1>
         <p style=\"color:#9ca3af;font-size:0.9rem;\">
-          Static shell UI — on-chain and Aave APIs will be wired in next.
+          Live read-only data from Aave v3 on Avalanche. Enter a wallet address to load positions.
         </p>
       </div>
       <div>
-        <button>Connect Wallet</button>
+        <form id=\"address-form\" style=\"display:flex;gap:0.5rem;align-items:center;\">
+          <input id=\"address-input\" name=\"address\" type=\"text\" placeholder=\"0x... wallet\" required style=\"min-width:260px;\" />
+          <button type=\"submit\">Load positions</button>
+        </form>
       </div>
     </header>
 
     <section class=\"grid-3\">
-      <article class=\"card\">
+      <article class=\"card\" id=\"deposits-card\">
         <p class=\"metric\">$0.00</p>
         <p class=\"metric-label\">Net worth</p>
         <p style=\"color:#9ca3af;font-size:0.8rem;margin-top:0.5rem;\">
@@ -163,27 +166,77 @@ async def dashboard():
           <span class=\"tag\">Wallet: not connected</span>
         </div>
         <p style=\"color:#9ca3af;font-size:0.85rem;\">
-          Once we connect a wallet and Aave API, your supplied assets will appear here.
+          Supplied assets for the entered wallet.
         </p>
-        <ul>
+        <ul id=\"deposits-list\">
           <li style=\"color:#6b7280;font-size:0.85rem;\">No deposits yet</li>
         </ul>
       </article>
 
-      <article class=\"card\">
+      <article class=\"card\" id=\"borrows-card\">
         <div style=\"display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;\">
           <h2 style=\"font-size:1rem;margin:0;\">Your borrows</h2>
           <span class=\"tag\">Risk overview</span>
         </div>
         <p style=\"color:#9ca3af;font-size:0.85rem;\">
-          Borrowed positions, interest rates and collateralization will show here.
+          Borrowed positions for the entered wallet.
         </p>
-        <ul>
+        <ul id=\"borrows-list\">
           <li style=\"color:#6b7280;font-size:0.85rem;\">No borrows yet</li>
         </ul>
       </article>
     </section>
   </main>
+  <script>
+    const form = document.getElementById("address-form");
+    const input = document.getElementById("address-input");
+    const depositsList = document.getElementById("deposits-list");
+    const borrowsList = document.getElementById("borrows-list");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const address = input.value.trim();
+      if (!address) return;
+
+      depositsList.innerHTML = "<li style='color:#6b7280;font-size:0.85rem;'>Loading...</li>";
+      borrowsList.innerHTML = "<li style='color:#6b7280;font-size:0.85rem;'>Loading...</li>";
+
+      try {
+        const res = await fetch(`/api/aave/v3/user-position?address=${encodeURIComponent(address)}`);
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(text || `HTTP ${res.status}`);
+        }
+        const data = await res.json();
+        const positions = Array.isArray(data.positions) ? data.positions : [];
+
+        const deposits = positions.filter((p) => p.deposit && p.deposit > 0);
+        const borrows = positions.filter((p) => p.variableBorrow && p.variableBorrow > 0);
+
+        depositsList.innerHTML = deposits.length
+          ? deposits
+              .map(
+                (p) =>
+                  `<li style='font-size:0.85rem;'>${p.symbol}: <strong>${p.deposit}</strong></li>`,
+              )
+              .join("")
+          : "<li style='color:#6b7280;font-size:0.85rem;'>No deposits found</li>";
+
+        borrowsList.innerHTML = borrows.length
+          ? borrows
+              .map(
+                (p) =>
+                  `<li style='font-size:0.85rem;'>${p.symbol}: <strong>${p.variableBorrow}</strong></li>`,
+              )
+              .join("")
+          : "<li style='color:#6b7280;font-size:0.85rem;'>No borrows found</li>";
+      } catch (err) {
+        const msg = (err && err.message) || "Failed to load positions";
+        depositsList.innerHTML = `<li style='color:#ef4444;font-size:0.85rem;'>${msg}</li>`;
+        borrowsList.innerHTML = `<li style='color:#ef4444;font-size:0.85rem;'>${msg}</li>`;
+      }
+    });
+  </script>
 </body>
 </html>
     """
