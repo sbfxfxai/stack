@@ -26,3 +26,6 @@ jobs:
       run: |
         npm install
         grunt
+        cd aave-avalanche-app/backend
+        npm install
+        npm run build
