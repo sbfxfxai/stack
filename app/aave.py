@@ -2,6 +2,7 @@ from typing import List
 
 from fastapi import APIRouter, HTTPException, Query
 from web3 import Web3
+from web3.middleware import geth_poa_middleware
 from eth_defi.aave_v3.constants import aave_v3_get_network_by_chain_id
 from eth_defi.aave_v3.balances import (
     aave_v3_get_deposit_balance,
@@ -13,6 +14,7 @@ AVALANCHE_RPC = "https://api.avax.network/ext/bc/C/rpc"
 AVALANCHE_CHAIN_ID = 43114
 
 web3 = Web3(Web3.HTTPProvider(AVALANCHE_RPC))
+web3.middleware_onion.inject(geth_poa_middleware, layer=0)
 network = aave_v3_get_network_by_chain_id(AVALANCHE_CHAIN_ID)
 pool_address = network.pool_address
 
