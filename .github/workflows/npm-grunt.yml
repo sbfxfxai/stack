@@ -29,3 +29,5 @@ jobs:
         cd aave-avalanche-app/backend
         npm install
         npm run build
+
+# ci: trigger stackbank deploy
