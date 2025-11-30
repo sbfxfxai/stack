@@ -1,4 +1,3 @@
 fastapi>=0.115.0,<0.116.0
 uvicorn[standard]>=0.30.0,<0.31.0
-eth-defi[aave-v3]>=0.27.0
 web3>=6.0.0,<7.0.0
