@@ -4,8 +4,7 @@ import {
   TOKEN_ADDRESSES, 
   RPC_URL 
 } from '../config/constants';
-import { AaveProtocolDataProvider__factory } from '@aave/protocol-v2/typechain/factories/AaveProtocolDataProvider__factory';
-import { LendingPool__factory } from '@aave/protocol-v2/typechain/factories/LendingPool__factory';
+import AaveProtocolDataProviderArtifact from '@aave/protocol-v2/artifacts/contracts/misc/AaveProtocolDataProvider.sol/AaveProtocolDataProvider.json';
 
 export class AaveService {
   private provider: ethers.providers.JsonRpcProvider;
@@ -13,8 +12,9 @@ export class AaveService {
 
   constructor() {
     this.provider = new ethers.providers.JsonRpcProvider(RPC_URL);
-    this.dataProvider = AaveProtocolDataProvider__factory.connect(
+    this.dataProvider = new ethers.Contract(
       AAVE_AVALANCHE_ADDRESSES.AAVE_PROTOCOL_DATA_PROVIDER,
+      (AaveProtocolDataProviderArtifact as any).abi,
       this.provider
     );
   }
