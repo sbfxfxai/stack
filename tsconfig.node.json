@@ -1,13 +1,16 @@
 {
   "compilerOptions": {
     "composite": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable", "ES2015.Collection"],
+    "skipLibCheck": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "allowJs": true,
-    "checkJs": false
+    "checkJs": false,
+    "noEmit": true
   },
   "include": ["vite.config.js"]
 }

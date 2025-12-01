@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import { RefreshCcw, LogOut, Wallet, Loader, AlertTriangle } from 'lucide-react';
+import PageLayout from '../components/PageLayout';
 
 const FASTAPI_ENDPOINT_URL = 'https://your-live-fastapi-backend.vercel.app'; // Updated deployment
 const APP_NAME = 'Aave Avalanche Live Dashboard';
@@ -129,8 +130,9 @@ const WalletPage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 sm:p-8 flex items-start justify-center">
-      <div className="w-full max-w-4xl">
+    <PageLayout>
+      <div className="min-h-screen bg-gray-100 p-4 sm:p-8 flex items-start justify-center">
+        <div className="w-full max-w-4xl">
         <header className="text-center py-6">
           <h1 className="text-4xl font-extrabold text-gray-800 mb-2">{APP_NAME}</h1>
           <p className="text-md text-gray-500">Live Aave V3 Balances from Avalanche Chain ID: {CHAIN_ID}</p>
@@ -181,7 +183,8 @@ const WalletPage = () => {
           )}
         </main>
       </div>
-    </div>
+      </div>
+    </PageLayout>
   );
 };
 

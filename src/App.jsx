@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import { RefreshCcw, LogOut, Wallet, Loader, AlertTriangle } from 'lucide-react';
 
-const FASTAPI_ENDPOINT_URL = 'https://your-live-fastapi-backend.vercel.app';
+const FASTAPI_ENDPOINT_URL = 'https://api.example.com/aave-avalanche-app-backend'; // Update the backend URL to a real endpoint
 const APP_NAME = 'Aave Avalanche Live Dashboard';
 const CHAIN_ID = 43114;
 
